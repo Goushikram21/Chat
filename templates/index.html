@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<style>
+ #chat-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  cursor: pointer;
+  z-index: 9999;
+}
+
+/* Chatbot popup window style */
+#chat-window {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width:50%;
+
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  display: none;
+  z-index: 9998;
+}
+
+/* Chatbot popup window header style */
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.chat-header h3 {
+  margin: 0;
+}
+
+.close-btn {
+  border: none;
+  background-color: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Chatbot popup window body style */
+.chat-body {
+  padding: 24px;
+}
+
+.chat-messages {
+  height: 200px;
+  overflow-y: scroll;
+}
+
+#chat-input {
+  margin-top: 16px;
+}
+
+#chat-input input[type="text"] {
+  width: calc(100% - 80px);
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 20px;
+  margin-right: 8px;
+}
+
+#chat-input button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+</style>
+
+
+
+  </head>
+  <body style="background-image: url('https://www.livelaw.in/h-upload/2022/11/14/1500x900_444092-legal-aid.jpg');width:900px;height:780px;">
+    <center><h1>LEGAL INFORMATION CHAT BOT SYSTEM </h1></center>
+    <button id="chat-btn" onclick="openChat()"><img src="/static/icon1.jpg" style="height:20px;width:30px;border-radius:50px;"></button>
+
+    <!-- Chatbot popup window -->
+    <div id="chat-window">
+      <div class="chat-header">
+        <h3>Chat with our bot</h3>
+        <button class="close-btn" onclick="closeChat()">Close</button>
+      </div>
+      <div class="chat-body" id="chat-body">
+        <div class="chat-messages" id="chat-messages">
+          <p id="cc">.</p>
+        </div>
+        <div id="chat-input">
+          <input type="text" id="textInput" placeholder="Type your message...">
+          <button id="buttonInput">Send</button>
+        </div>
+      </div>
+    </div>
+      <script>
+        function openChat() {
+  document.getElementById("chat-window").style.display = "block";
+}
+function closeChat() {
+  document.getElementById("chat-window").style.display = "none";
+}
+
+        function getBotResponse() {
+          var rawText = $("#textInput").val();
+          var userHtml = '<p class="userText"><span>' + rawText + '</span></p>';
+          $("#textInput").val("");
+          $("#chat-messages").append(userHtml);
+          document.getElementById('chat-input').scrollIntoView({block: 'start', behavior: 'smooth'});
+          $.get("/get", { msg: rawText }).done(function(data) {
+            var botHtml = '<p class="botText"><span>' + data + '</span></p>';
+            console.log(data)
+            $("#chat-messages").append(botHtml);
+            document.getElementById('chat-input').scrollIntoView({block: 'start', behavior: 'smooth'});
+          });
+        }
+        $("#textInput").keypress(function(e) {
+            if(e.which == 13) {
+                getBotResponse();
+            }
+        });
+        $("#buttonInput").click(function() {
+          getBotResponse();
+        })
+      </script>
+    </div>
+  </body>
+</html>
